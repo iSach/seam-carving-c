@@ -24,10 +24,12 @@
 
 int main() {
     PNMImage* original = readPNM("pnm/01.pnm");
+    printf("FHIQfh\n");
 
     if(original == NULL) {
         printf("image null!\n\n");
     }
+    printf("flqqfl\n");
     PNMImage* result = reduceImageWidth(original, 1);
     for(size_t i = 0; i < 99; i++)
       result = reduceImageWidth(result, 1);
