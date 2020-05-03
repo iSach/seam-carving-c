@@ -23,18 +23,19 @@
 #include "PNM.h"
 
 int main() {
-    PNMImage* original = readPNM("pnm/jojo.pnm");
+    PNMImage* original = readPNM("pnm/01.pnm");
 
     if(original == NULL) {
         printf("image null!\n\n");
     }
+    PNMImage* result = reduceImageWidth(original, 1);
+    for(size_t i = 0; i < 99; i++)
+      result = reduceImageWidth(result, 1);
 
-    PNMImage* result = reduceImageWidth(original, 0);
+    writePNM("pnm/01b.pnm", result);
 
-    writePNM("pnm/result.pnm", result);
-
-    freePNM(original);
-    freePNM(result);
+    //freePNM(original);
+  //  freePNM(result);
 
     return 0;
 }

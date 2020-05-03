@@ -10,21 +10,13 @@
 stddef.h
 -
 
-/Users/sacha/CLionProjects/image_slimming/mainSlimming.c
+/Users/sacha/CLionProjects/image_slimming/slimming.c
+PNM.h
+/Users/sacha/CLionProjects/image_slimming/PNM.h
+math.h
+-
 stdio.h
 -
 stdlib.h
 -
-string.h
--
-slimming.h
-/Users/sacha/CLionProjects/image_slimming/slimming.h
-PNM.h
-/Users/sacha/CLionProjects/image_slimming/PNM.h
-
-/Users/sacha/CLionProjects/image_slimming/slimming.h
-stddef.h
--
-PNM.h
-/Users/sacha/CLionProjects/image_slimming/PNM.h
 
