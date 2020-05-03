@@ -2,8 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static size_t* min_energy_path_asc(double* energy_path, size_t m, size_t n);
+static size_t* min_energy_path_asc(const double* energy_tab, size_t m, size_t n);
+
 static double pixel_energy(const PNMImage* image, size_t i, size_t j);
+
 // 0 = red, 1 = green, 2 = blue
 static unsigned char
 pixel_value(const PNMImage* image, size_t i, size_t j, size_t color);
@@ -15,25 +17,25 @@ PNMImage* reduceImageWidth(const PNMImage* image, size_t k) {
     int width = image->width;
 
     double* energy_tab = malloc(height * width * sizeof(double));
-    if(energy_tab == NULL){
+    if (energy_tab == NULL) {
         perror("Error while allocating memory. Exiting.");
-        return NULL; 
+        return NULL;
     }
-    
-    for(size_t i = 0; i < height; i++){
-        for(size_t j = 0; j < width; j++){
-            energy_tab[i*width+j] = pixel_energy(image,i,j);
+
+    for (size_t i = 0; i < height; i++) {
+        for (size_t j = 0; j < width; j++) {
+            energy_tab[i * width + j] = pixel_energy(image, i, j);
         }
     }
 
     for (size_t iteration = 0; iteration < k; iteration++) {
         PNMImage* new_image = createPNM(width - 1, height);
-        double* new_energy_tab = malloc(height * (width-1) * sizeof(double));
-        if(new_energy_tab == NULL){
-        perror("Error while allocating memory. Exiting.");
-        return NULL; 
-    }
-        printf("print 1\n");
+        double* new_energy_tab = malloc(height * (width - 1) * sizeof(double));
+        if (new_energy_tab == NULL) {
+            perror("Error while allocating memory. Exiting.");
+            return NULL;
+        }
+        //printf("print 1\n");
         size_t* min_path = min_energy_path_asc(energy_tab, width, height);
 
         // Remove pixels
@@ -44,35 +46,43 @@ PNMImage* reduceImageWidth(const PNMImage* image, size_t k) {
             for (size_t b = 0; b < width; b++) {
                 if (b == path_col) continue;
 
-                new_energy_tab[a * new_image->width + x] = energy_tab[a * new_image->width + b];
+                new_energy_tab[a * new_image->width + x] = energy_tab[
+                        a * new_image->width + b];
                 new_image->data[a * new_image->width + x] =
                         reduced_image->data[a * reduced_image->width + b];
                 x++;
             }
         }
 
-        printf("print 2\n");
-        for(size_t i = 0; i < height; i++){
+      //  printf("print 2\n");
+        for (size_t i = 0; i < height; i++) {
             size_t path_col = min_path[i];
-            if(path_col < width-1){
-                new_energy_tab[i * (width-1) + path_col] = pixel_energy(new_image, i, path_col);
+            if (path_col < width - 1) {
+                new_energy_tab[i * (width - 1) + path_col] = pixel_energy(
+                        new_image, i, path_col);
             }
-            if(path_col > 0){
-                new_energy_tab[i * (width-1) + path_col-1] = pixel_energy(new_image, i, path_col-1);
+            if (path_col > 0) {
+                new_energy_tab[i * (width - 1) + path_col - 1] = pixel_energy(
+                        new_image, i, path_col - 1);
             }
         }
-        printf("print 3\n");
+       // printf("print 3\n");
         width--;
+
         free(reduced_image);
         free(energy_tab);
+        free(min_path);
+
         reduced_image = new_image;
         energy_tab = new_energy_tab;
     }
 
+    free(energy_tab);
+
     return reduced_image;
 }
 
-static size_t* min_energy_path_asc(double* energy_tab, size_t m, size_t n) {
+static size_t* min_energy_path_asc(const double* energy_tab, size_t m, size_t n) {
 
     double* tab = malloc(m * n * sizeof(double));
     if (tab == NULL) {
@@ -178,7 +188,8 @@ static size_t* min_energy_path_asc(double* energy_tab, size_t m, size_t n) {
 static double pixel_energy(const PNMImage* image, size_t i, size_t j) {
     double energy = 0;
 
-    if (i >= image->height || j >= image->width) {
+    if (i >= image->height || j >= image->width
+        || i < 0 || j < 0) {
         return 0;
     }
 

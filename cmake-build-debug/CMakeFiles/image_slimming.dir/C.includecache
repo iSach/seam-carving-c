@@ -13,8 +13,6 @@ stddef.h
 /Users/sacha/CLionProjects/image_slimming/slimming.c
 PNM.h
 /Users/sacha/CLionProjects/image_slimming/PNM.h
-math.h
--
 stdio.h
 -
 stdlib.h
