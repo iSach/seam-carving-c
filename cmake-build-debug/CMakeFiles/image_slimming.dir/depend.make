@@ -10,4 +10,5 @@ CMakeFiles/image_slimming.dir/mainSlimming.c.o: ../slimming.h
 
 CMakeFiles/image_slimming.dir/slimming.c.o: ../PNM.h
 CMakeFiles/image_slimming.dir/slimming.c.o: ../slimming.c
+CMakeFiles/image_slimming.dir/slimming.c.o: ../slimming.h
 

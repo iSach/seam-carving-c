@@ -17,4 +17,12 @@ stdio.h
 -
 stdlib.h
 -
+slimming.h
+/Users/sacha/CLionProjects/image_slimming/slimming.h
+
+/Users/sacha/CLionProjects/image_slimming/slimming.h
+stddef.h
+-
+PNM.h
+/Users/sacha/CLionProjects/image_slimming/PNM.h
 

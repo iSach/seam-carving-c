@@ -22,27 +22,7 @@
 #include "slimming.h"
 #include "PNM.h"
 
-int main() {
-    PNMImage* original = readPNM("pnm/01.pnm");
-    printf("FHIQfh\n");
-
-    if(original == NULL) {
-        printf("image null!\n\n");
-    }
-    printf("flqqfl\n");
-    PNMImage* result = reduceImageWidth(original, 1);
-    for(size_t i = 0; i < 99; i++)
-      result = reduceImageWidth(result, 1);
-
-    writePNM("pnm/01b.pnm", result);
-
-    //freePNM(original);
-  //  freePNM(result);
-
-    return 0;
-}
-
-int main2(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     /* --- Argument parsing --- */
     if (argc != 4) {
