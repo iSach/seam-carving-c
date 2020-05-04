@@ -1,5 +1,6 @@
 #include "PNM.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
 
 #include "slimming.h"
@@ -54,11 +55,12 @@ PNMImage* reduceImageWidth(const PNMImage* image, size_t k) {
     }
     for (size_t i = 0; i < height; i++) {
         for (size_t j = 0; j < width; j++) {
-            energy_tab[i * width + j] = pixel_energy(original, i, j);
+            energy_tab[i * width + j] = pixel_energy(image, i, j);
         }
     }
 
     for (size_t iteration = 0; iteration < k; iteration++) {
+//        printf("\n\n\n------- iteration %zu --------\n", iteration);
         size_t new_width = width - 1;
 
         PNMImage* new_image = createPNM(width - 1, height);
@@ -73,7 +75,6 @@ PNMImage* reduceImageWidth(const PNMImage* image, size_t k) {
         // Remove pixels
         for (size_t i = 0; i < height; i++) {
             size_t x = 0;
-            x = 0;
             size_t path_col = min_path[i];
             for (size_t j = 0; j < width; j++) {
                 if (j == path_col) continue;
@@ -88,6 +89,8 @@ PNMImage* reduceImageWidth(const PNMImage* image, size_t k) {
         // Update pixel energies adjacent to the deleted path
         for (size_t i = 0; i < height; i++) {
             size_t path_col = min_path[i];
+            //if (i == 0)
+            //   printf("path_col at i=%zu -> %zu\n", i, path_col);
 
             if (path_col < width) {
                 new_energy_tab[i * new_width + path_col] =
@@ -99,6 +102,35 @@ PNMImage* reduceImageWidth(const PNMImage* image, size_t k) {
                         pixel_energy(new_image, i, path_col - 1);
             }
         }
+
+        for (size_t j = 0; j < new_width; j++) {
+            new_energy_tab[j] = pixel_energy(new_image, 0, j);
+        }
+        for (size_t i = 0; i < height; i++) {
+            new_energy_tab[i * new_width] = pixel_energy(new_image, i, 0);
+        }
+
+        // Update all(?)
+        /*for (size_t j = 0; j < new_width; j++) {
+            for (size_t i = 0; i < height; i++) {
+                new_energy_tab[i * new_width + j] = pixel_energy(new_image, i, j);
+            }
+        }*/
+
+        size_t count = 0;
+        for (size_t i = 0; i < height; i++) {
+            for (size_t j = 0; j < new_width; j++) {
+                double correct_value = pixel_energy(new_image, i, j);
+                double updated_val = new_energy_tab[i * new_width + j];
+
+                if (correct_value != updated_val) {
+//                    printf("Energy Different at: (%zu, %zu)    got: %lf    Expected: %lf\n",
+                        //   i, j, updated_val, correct_value);
+                    count++;
+                }
+            }
+        }
+//        printf("\nDifferent ACount: %zu\n", count);
 
         if (original != image)
             freePNM(original);
@@ -198,9 +230,13 @@ min_energy_path(const double* energy_tab, size_t m, size_t n) {
     }
 
     size_t j = opt_end_pixel; // col
+    size_t min_col = 5000000;
+    size_t max_col = 0;
     for (size_t k = 0; k < n; k++) {
         size_t i = n - 1 - k; // (n-1) -> (0) = row
         path[i] = j;
+        if (j < min_col) min_col = j;
+        if (j > max_col) max_col = j;
 
         switch (moves[i * m + j]) {
             case 1:
@@ -211,6 +247,9 @@ min_energy_path(const double* energy_tab, size_t m, size_t n) {
                 break;
         }
     }
+
+    //printf("Seam min column: %zu\n", min_col);
+    //printf("Seam max column: %zu\n", max_col);
 
     free(moves);
 
@@ -226,19 +265,14 @@ static double pixel_energy(const PNMImage* image, size_t i, size_t j) {
 
     // iterate over red, green and blue.
     for (size_t c = 0; c < 3; c++) {
-        unsigned char top_value = 0;
-        unsigned char left_value = 0;
-        if(i > 0)
-            top_value = pixel_value(image, i - 1, j, c);
-        else
-            top_value = pixel_value(image, i, j, c);
-        if(j > 0)
-            left_value = pixel_value(image, i, j - 1, c);
-        else
-            left_value = pixel_value(image, i, j, c);
-        energy += fabs(((top_value - pixel_value(image, i + 1, j, c)) / 2.0));
-        energy += fabs(((left_value - pixel_value(image, i, j + 1, c)) / 2.0));
+        energy += fabs(((pixel_value(image, i - 1, j, c) -
+                         pixel_value(image, i + 1, j, c))) / 2.0);
+        energy += fabs(((pixel_value(image, i, j - 1, c) -
+                         pixel_value(image, i, j + 1, c))) / 2.0);
     }
+
+    //if(energy != 0)
+    //  printf("E: %lf\n", energy);
 
     return energy;
 }
