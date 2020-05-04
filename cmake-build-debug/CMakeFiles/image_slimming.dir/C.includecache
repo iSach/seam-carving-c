@@ -13,9 +13,9 @@ stddef.h
 /Users/sacha/CLionProjects/image_slimming/slimming.c
 PNM.h
 /Users/sacha/CLionProjects/image_slimming/PNM.h
-stdio.h
--
 stdlib.h
+-
+stdio.h
 -
 slimming.h
 /Users/sacha/CLionProjects/image_slimming/slimming.h

@@ -22,6 +22,28 @@
 #include "slimming.h"
 #include "PNM.h"
 
+// Compare images...
+int main2() {
+    PNMImage* not_effect = readPNM("pnm/07c.pnm");
+    PNMImage* effect = readPNM("pnm/07d.pnm");
+    size_t count = 0;
+    for(int i = 0; i < not_effect->height; i++) {
+        for(int j = 0; j < not_effect->width; j++) {
+            PNMPixel* p1 = not_effect->data + i * not_effect->width + j;
+            size_t data1 = p1->red + p1->blue + p1->green;
+            PNMPixel* p2 = effect->data + i * not_effect->width + j;
+            size_t data2 = p2->red + p2->blue + p2->green;
+            if(data1 != data2) {
+                printf("Different at: (%d, %d)\n", i, j);
+                count++;
+            }
+        }
+    }
+    printf("\nDifferent Count: %zu\n", count);
+
+    return 0;
+}
+
 int main(int argc, char* argv[])
 {
     /* --- Argument parsing --- */
