@@ -38,27 +38,75 @@ static void compare_images(PNMImage* a, PNMImage* b) {
         }
     }
     printf("\nDifferent Count: %zu\n", count);
+}
 
+static void const_img() {
+    const PNMImage* image = createPNM(500, 500);
+    for (size_t i = 0; i < 500; i++) {
+        for (size_t j = 0; j < 500; j++) {
+            PNMPixel* pixel = image->data + i * 500 + j;
+            pixel->red = 200;
+            pixel->blue = 200;
+            pixel->green = 200;
+        }
+    }
+    writePNM("pnm/const.pnm", image);
+
+    printf("----------| Before |----------\n");
+    printf("Img Width: %zu\n", image->width);
+    printf("Img Height: %zu\n", image->height);
+    for (size_t i = 0; i < 500; i++) {
+        for (size_t j = 0; j < 500; j++) {
+            PNMPixel* pixel = image->data + i * 500 + j;
+            unsigned char r = pixel->red;
+            unsigned char g = pixel->blue;
+            unsigned char b = pixel->green;
+
+            if(r != 200 || g != 200 || b != 200) {
+                printf("Image is not OK!!!\n");
+            }
+        }
+    }
+
+    const PNMImage* modded = reduceImageWidth(image, 2);
+
+    printf("\n\n----------| After |----------\n");
+    printf("Img Width: %zu\n", modded->width);
+    printf("Img Height: %zu\n", modded->height);
+    for (size_t i = 0; i < modded->height; i++) {
+        for (size_t j = 0; j < modded->width; j++) {
+            PNMPixel* pixel = image->data + i * modded->width + j;
+            unsigned char r = pixel->red;
+            unsigned char g = pixel->blue;
+            unsigned char b = pixel->green;
+
+            if(r != 200 || g != 200 || b != 200) {
+                printf("Image is not OK!!!\n");
+            }
+        }
+    }
 }
 
 // Compare images...
-int main2() {
-    PNMImage* original = readPNM("pnm/07.pnm");
-    PNMImage* naive = reduceImageWidth(original, 1);
-    for(int i = 0; i < 99; i++) {
-        naive = reduceImageWidth(naive, 1);
-    }
-    PNMImage* efficient = reduceImageWidth(original, 100);
+int main() {
+//    PNMImage* original = readPNM("pnm/waves.pnm");
+//    PNMImage* naive = reduceImageWidth(original, 1);
+//    for (int i = 0; i < 99; i++) {
+//        naive = reduceImageWidth(naive, 1);
+//    }
+//    PNMImage* efficient = reduceImageWidth(original, 100);
+//
+//    compare_images(naive, efficient);
 
-    compare_images(naive, efficient);
+    const_img();
 
-    writePNM("pnm/07naive.pnm", naive);
-    writePNM("pnm/07effi.pnm", naive);
+//    writePNM("pnm/07naive.pnm", naive);
+//    writePNM("pnm/07effi.pnm", naive);
 
     return 0;
 }
 
-int main(int argc, char* argv[]) {
+int main2(int argc, char* argv[]) {
     /* --- Argument parsing --- */
     if (argc != 4) {
         fprintf(stderr, "Usage: %s input.pnm output.pnm nbPix\n", argv[0]);
