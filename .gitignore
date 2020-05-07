@@ -106,3 +106,14 @@ cmake-build-debug/CMakeFiles/CMakeTmp/
 *.tar.gz
 
 slimming
+
+*/.DS_Store
+
+vscode/
+vscode/*
+
+.idea/*
+.idea
+
+build
+build/*

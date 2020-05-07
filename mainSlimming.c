@@ -22,112 +22,9 @@
 #include "slimming.h"
 #include "PNM.h"
 
-static void compare_images(PNMImage* a, PNMImage* b) {
-    size_t count = 0;
-    for (int i = 0; i < a->height; i++) {
-        for (int j = 0; j < a->width; j++) {
-            PNMPixel* p1 = a->data + i * a->width + j;
-            size_t data1 = p1->red + p1->blue + p1->green;
-            PNMPixel* p2 = b->data + i * b->width + j;
-            size_t data2 = p2->red + p2->blue + p2->green;
 
-            if (data1 != data2) {
-                printf("Different at: (%d, %d)\n", i, j);
-                count++;
-            }
-        }
-    }
-    printf("\nDifferent Count: %zu\n", count);
-}
-
-static void const_img() {
-    const PNMImage* image = createPNM(3, 1);
-    for (size_t i = 0; i < image->height; i++) {
-        for (size_t j = 0; j < image->width; j++) {
-            PNMPixel* pixel = image->data + i * image->width + j;
-            pixel->red = 200;
-            pixel->blue = 200;
-            pixel->green = 200;
-        }
-    }
-    writePNM("pnm/const.pnm", image);
-
-    printf("----------| Before |----------\n");
-    printf("Ori Width: %zu\n", image->width);
-    printf("Ori Height: %zu\n", image->height);
-    for (size_t i = 0; i < image->height; i++) {
-        for (size_t j = 0; j < image->width; j++) {
-            PNMPixel* pixel = image->data + i * image->width + j;
-            unsigned char r = pixel->red;
-            unsigned char g = pixel->blue;
-            unsigned char b = pixel->green;
-
-            if(r != 200 || g != 200 || b != 200) {
-                printf("Image is not OK!!!\n");
-            }
-        }
-    }
-
-    const PNMImage* modded = reduceImageWidth(image, 2);
-    if(modded == NULL) {
-        printf("Error!\n");
-        return;
-    }
-
-    printf("\n\n----------| After |----------\n");
-    printf("Ori Width: %zu\n", image->width);
-    printf("Ori Height: %zu\n", image->height);
-    for (size_t i = 0; i < image->height; i++) {
-        for (size_t j = 0; j < image->width; j++) {
-            PNMPixel* pixel = image->data + i * image->width + j;
-            unsigned char r = pixel->red;
-            unsigned char g = pixel->blue;
-            unsigned char b = pixel->green;
-
-            if(r != 200 || g != 200 || b != 200) {
-                printf("Modded Image is not OK!!!\n");
-            }
-        }
-    }
-    printf("Modded Width: %zu\n", modded->width);
-    printf("Modded Height: %zu\n", modded->height);
-    for (size_t i = 0; i < modded->height; i++) {
-        for (size_t j = 0; j < modded->width; j++) {
-            PNMPixel* pixel = modded->data + i * modded->width + j;
-            unsigned char r = pixel->red;
-            unsigned char g = pixel->blue;
-            unsigned char b = pixel->green;
-
-            if(r != 200 || g != 200 || b != 200) {
-                printf("Modded Image is not OK!!!\n");
-            }
-        }
-    }
-
-    writePNM("pnm/const.pnm", image);
-    writePNM("pnm/const_mod.pnm", modded);
-}
-
-// Compare images...
-int main() {
-//    PNMImage* original = readPNM("pnm/waves.pnm");
-//    PNMImage* naive = reduceImageWidth(original, 1);
-//    for (int i = 0; i < 99; i++) {
-//        naive = reduceImageWidth(naive, 1);
-//    }
-//    PNMImage* efficient = reduceImageWidth(original, 100);
-//
-//    compare_images(naive, efficient);
-
-    const_img();
-
-//    writePNM("pnm/07naive.pnm", naive);
-//    writePNM("pnm/07effi.pnm", naive);
-
-    return 0;
-}
-
-int main2(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
     /* --- Argument parsing --- */
     if (argc != 4) {
         fprintf(stderr, "Usage: %s input.pnm output.pnm nbPix\n", argv[0]);
@@ -136,28 +33,29 @@ int main2(int argc, char* argv[]) {
 
     // Slimming width
     int nbPix;
-    if (sscanf(argv[3], "%d", &nbPix) != 1) {
-        fprintf(stderr, "%s\n",
-                "Aborting; nbPix should be a positive integer.\n");
+    if(sscanf (argv[3], "%d", &nbPix) != 1)
+    {
+        fprintf(stderr, "%s\n", "Aborting; nbPix should be a positive integer.\n");
         exit(EXIT_FAILURE);
     }
-    if (nbPix <= 0) {
+    if(nbPix <= 0)
+    {
         fprintf(stderr, "nbPix must be strictly positive. Got '%d'\n", nbPix);
         return EXIT_FAILURE;
     }
-    size_t k = (size_t) nbPix;
+    size_t k = (size_t)nbPix;
 
     // Load image
     PNMImage* original = readPNM(argv[1]);
-    if (!original) {
+    if (!original)
+    {
         fprintf(stderr, "Aborting; cannot load image '%s'\n", argv[1]);
         return EXIT_FAILURE;
     }
 
-    if (k >= original->width) {
-        fprintf(stderr,
-                "Aborting; image of width %zu cannot be reduced by %zu pixels\n",
-                original->width, k);
+    if(k >= original->width)
+    {
+        fprintf(stderr, "Aborting; image of width %zu cannot be reduced by %zu pixels\n", original->width, k);
         freePNM(original);
         return EXIT_FAILURE;
     }
@@ -166,7 +64,8 @@ int main2(int argc, char* argv[]) {
     PNMImage* output = reduceImageWidth(original, k);
 
     /* --- Writing output --- */
-    if (!output) {
+    if (!output)
+    {
         fprintf(stderr, "Aborting; cannot build new image\n");
         freePNM(original);
         return EXIT_FAILURE;

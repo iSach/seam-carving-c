@@ -12,4 +12,9 @@ Grade: ?/20
 
 ### Running
 
-First, compile:
+First, compile:  
+`gcc -o seamcarving mainSlimming.c slimming.c PNM.c`
+
+Then, run:  
+`./seamcarving original.pnm carved.pnm k`  
+Where k is the number of pixels to remove.
