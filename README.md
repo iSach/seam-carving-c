@@ -18,3 +18,10 @@ First, compile:
 Then, run:  
 `./seamcarving original.pnm carved.pnm k`  
 Where k is the number of pixels to remove.
+
+### Report
+The release folder contains a pdf report, answering some theoretical questions
+about the project. (In French)
+
+### Assignment
+[Click here for the assignment pdf](http://www.montefiore.ulg.ac.be/~jmbegon/2019_2020/sda/p3.pdf)
