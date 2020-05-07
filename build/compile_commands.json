@@ -1,0 +1,19 @@
+[
+{
+  "directory": "c:/Unif/Bac 2 Q2/SDA/Projet 3/image-slimming/build",
+  "command": "\"C:\\PROGRA~2\\Microsoft Visual Studio\\2017\\Community\\VC\\Tools\\MSVC\\14.15.26726\\bin\\Hostx64\\x64\\cl.exe\"  /nologo   /DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1   /FoCMakeFiles\\image_slimming.dir\\mainSlimming.c.obj /FdTARGET_COMPILE_PDB /FS -c \"C:\\Unif\\Bac 2 Q2\\SDA\\Projet 3\\image-slimming\\mainSlimming.c\"",
+  "file": "C:/Unif/Bac 2 Q2/SDA/Projet 3/image-slimming/mainSlimming.c"
+},
+
+{
+  "directory": "c:/Unif/Bac 2 Q2/SDA/Projet 3/image-slimming/build",
+  "command": "\"C:\\PROGRA~2\\Microsoft Visual Studio\\2017\\Community\\VC\\Tools\\MSVC\\14.15.26726\\bin\\Hostx64\\x64\\cl.exe\"  /nologo   /DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1   /FoCMakeFiles\\image_slimming.dir\\PNM.c.obj /FdTARGET_COMPILE_PDB /FS -c \"C:\\Unif\\Bac 2 Q2\\SDA\\Projet 3\\image-slimming\\PNM.c\"",
+  "file": "C:/Unif/Bac 2 Q2/SDA/Projet 3/image-slimming/PNM.c"
+},
+
+{
+  "directory": "c:/Unif/Bac 2 Q2/SDA/Projet 3/image-slimming/build",
+  "command": "\"C:\\PROGRA~2\\Microsoft Visual Studio\\2017\\Community\\VC\\Tools\\MSVC\\14.15.26726\\bin\\Hostx64\\x64\\cl.exe\"  /nologo   /DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1   /FoCMakeFiles\\image_slimming.dir\\slimming.c.obj /FdTARGET_COMPILE_PDB /FS -c \"C:\\Unif\\Bac 2 Q2\\SDA\\Projet 3\\image-slimming\\slimming.c\"",
+  "file": "C:/Unif/Bac 2 Q2/SDA/Projet 3/image-slimming/slimming.c"
+}
+]
