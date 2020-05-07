@@ -41,10 +41,10 @@ static void compare_images(PNMImage* a, PNMImage* b) {
 }
 
 static void const_img() {
-    const PNMImage* image = createPNM(500, 500);
-    for (size_t i = 0; i < 500; i++) {
-        for (size_t j = 0; j < 500; j++) {
-            PNMPixel* pixel = image->data + i * 500 + j;
+    const PNMImage* image = createPNM(3, 1);
+    for (size_t i = 0; i < image->height; i++) {
+        for (size_t j = 0; j < image->width; j++) {
+            PNMPixel* pixel = image->data + i * image->width + j;
             pixel->red = 200;
             pixel->blue = 200;
             pixel->green = 200;
@@ -53,11 +53,11 @@ static void const_img() {
     writePNM("pnm/const.pnm", image);
 
     printf("----------| Before |----------\n");
-    printf("Img Width: %zu\n", image->width);
-    printf("Img Height: %zu\n", image->height);
-    for (size_t i = 0; i < 500; i++) {
-        for (size_t j = 0; j < 500; j++) {
-            PNMPixel* pixel = image->data + i * 500 + j;
+    printf("Ori Width: %zu\n", image->width);
+    printf("Ori Height: %zu\n", image->height);
+    for (size_t i = 0; i < image->height; i++) {
+        for (size_t j = 0; j < image->width; j++) {
+            PNMPixel* pixel = image->data + i * image->width + j;
             unsigned char r = pixel->red;
             unsigned char g = pixel->blue;
             unsigned char b = pixel->green;
@@ -69,22 +69,43 @@ static void const_img() {
     }
 
     const PNMImage* modded = reduceImageWidth(image, 2);
+    if(modded == NULL) {
+        printf("Error!\n");
+        return;
+    }
 
     printf("\n\n----------| After |----------\n");
-    printf("Img Width: %zu\n", modded->width);
-    printf("Img Height: %zu\n", modded->height);
-    for (size_t i = 0; i < modded->height; i++) {
-        for (size_t j = 0; j < modded->width; j++) {
-            PNMPixel* pixel = image->data + i * modded->width + j;
+    printf("Ori Width: %zu\n", image->width);
+    printf("Ori Height: %zu\n", image->height);
+    for (size_t i = 0; i < image->height; i++) {
+        for (size_t j = 0; j < image->width; j++) {
+            PNMPixel* pixel = image->data + i * image->width + j;
             unsigned char r = pixel->red;
             unsigned char g = pixel->blue;
             unsigned char b = pixel->green;
 
             if(r != 200 || g != 200 || b != 200) {
-                printf("Image is not OK!!!\n");
+                printf("Modded Image is not OK!!!\n");
             }
         }
     }
+    printf("Modded Width: %zu\n", modded->width);
+    printf("Modded Height: %zu\n", modded->height);
+    for (size_t i = 0; i < modded->height; i++) {
+        for (size_t j = 0; j < modded->width; j++) {
+            PNMPixel* pixel = modded->data + i * modded->width + j;
+            unsigned char r = pixel->red;
+            unsigned char g = pixel->blue;
+            unsigned char b = pixel->green;
+
+            if(r != 200 || g != 200 || b != 200) {
+                printf("Modded Image is not OK!!!\n");
+            }
+        }
+    }
+
+    writePNM("pnm/const.pnm", image);
+    writePNM("pnm/const_mod.pnm", modded);
 }
 
 // Compare images...

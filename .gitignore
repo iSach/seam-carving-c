@@ -102,3 +102,7 @@ fabric.properties
 
 cmake-build-debug/CMakeFiles/3.16.5/CompilerIdC/tmp/
 cmake-build-debug/CMakeFiles/CMakeTmp/
+
+*.tar.gz
+
+slimming

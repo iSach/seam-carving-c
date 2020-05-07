@@ -1,18 +1,20 @@
-#include "PNM.h"
 #include <stdlib.h>
 #include <math.h>
+
+#include "PNM.h"
 
 #include "slimming.h"
 
 /**
  * Calculates and returns the minimum energy path in the given energy 2D array.
  *
- * @param energy_tab The 2D array representing the energies of each pixel
- *                   of the image.
+ * @param energies The 2D array representing the energies of each pixel
+ *                 of the image.
  * @param width The width of the image.
  * @param height The height of the image.
  */
-static size_t* min_energy_path(const double* energy_tab, size_t width, size_t height);
+static size_t* min_energy_path(const double* energies, size_t width,
+                               size_t height);
 
 /**
  * @return The energy of a pixel in a given image, given by its position.
@@ -40,7 +42,7 @@ PNMImage* reduceImageWidth(const PNMImage* image, size_t k) {
         return NULL;
     }
 
-    PNMImage* original = (PNMImage*) image;
+    PNMImage* previous = (PNMImage*) image;
 
     size_t height = image->height;
     size_t width = image->width;
@@ -48,42 +50,45 @@ PNMImage* reduceImageWidth(const PNMImage* image, size_t k) {
     // Build the energy 2D array, that stores the energy values
     // between the k iterations to reduce execution time by not recalculating
     // all values each time.
-    double* energy_tab = malloc(height * width * sizeof(double));
+    double* energies = malloc(height * width * sizeof(double));
 
-    if (energy_tab == NULL) {
+    if (energies == NULL) {
         return NULL;
     }
 
     for (size_t i = 0; i < height; i++) {
         for (size_t j = 0; j < width; j++) {
-            energy_tab[i * width + j] = pixel_energy(original, i, j);
+            energies[i * width + j] = pixel_energy(previous, i, j);
         }
     }
 
     for (size_t iteration = 0; iteration < k; iteration++) {
         size_t new_width = width - 1;
 
-        PNMImage* new_image = createPNM(width - 1, height);
+        PNMImage* new_image = createPNM(new_width, height);
 
-        double* new_energy_tab = malloc(height * new_width * sizeof(double));
-        if (new_energy_tab == NULL) {
+        double* new_energies = malloc(height * new_width * sizeof(double));
+
+        if (new_energies == NULL) {
             return NULL;
         }
 
-        size_t* min_path = min_energy_path(energy_tab, width, height);
+        size_t* min_path = min_energy_path(energies, width, height);
 
         // Remove pixels
         for (size_t i = 0; i < height; i++) {
-            size_t x = 0;
-            x = 0;
+            size_t j_offset = 0; // New j index after the offset
             size_t path_col = min_path[i];
-            for (size_t j = 0; j < width; j++) {
-                if (j == path_col) continue;
-                
-                new_energy_tab[i * new_width + x] = energy_tab[i * width + j];
-                new_image->data[i * new_width + x] = original->data[i * width + j];
 
-                x++;
+            for (size_t j = 0; j < width; j++) {
+                if (j == path_col) continue; // Increment j but not j_offset
+
+                new_energies[i * new_width + j_offset] =
+                        energies[i * width + j];
+                new_image->data[i * new_width + j_offset] =
+                        previous->data[i * width + j];
+
+                j_offset++;
             }
         }
 
@@ -91,34 +96,36 @@ PNMImage* reduceImageWidth(const PNMImage* image, size_t k) {
         for (size_t i = 0; i < height; i++) {
             size_t path_col = min_path[i];
 
+            // To the right of the path
             if (path_col < new_width) {
-                new_energy_tab[i * new_width + path_col] =
+                new_energies[i * new_width + path_col] =
                         pixel_energy(new_image, i, path_col);
             }
 
+            // To the left of the path
             if (path_col > 0) {
-                new_energy_tab[i * new_width + path_col - 1] =
+                new_energies[i * new_width + path_col - 1] =
                         pixel_energy(new_image, i, path_col - 1);
             }
         }
 
-        if (original != image)
-            freePNM(original);
-        free(energy_tab);
+        if (previous != image)
+            freePNM(previous);
+        free(energies);
         free(min_path);
 
-        original = new_image;
-        energy_tab = new_energy_tab;
+        previous = new_image;
+        energies = new_energies;
         width--;
     }
 
-    free(energy_tab);
+    free(energies);
 
-    return original;
+    return previous;
 }
 
 static size_t*
-min_energy_path(const double* energy_tab, size_t width, size_t height) {
+min_energy_path(const double* energies, size_t width, size_t height) {
     // Stores the energy of the min energy path ending at each pixel
     double* tab = malloc(width * height * sizeof(double));
     if (tab == NULL) {
@@ -134,7 +141,7 @@ min_energy_path(const double* energy_tab, size_t width, size_t height) {
 
     // Fill the first line (Case 1)
     for (size_t k = 0; k < width; k++)
-        tab[k] = energy_tab[k];
+        tab[k] = energies[k];
 
     // Build the double array with the cost for each (i, j)
     for (size_t i = 1; i < height; i++) {
@@ -177,18 +184,18 @@ min_energy_path(const double* energy_tab, size_t width, size_t height) {
                 }
             }
 
-            tab[i * width + j] += energy_tab[i * width + j];
+            tab[i * width + j] += energies[i * width + j];
         }
     }
 
     // Select the minimum path within the pixels in the last line.
     double min = tab[(height - 1) * width + 0];
-    size_t opt_end_pixel = 0;
+    size_t best_last_pixel_column = 0;
     for (size_t k = 1; k < width; k++) {
         double new = tab[(height - 1) * width + k];
         if (new < min) {
             min = new;
-            opt_end_pixel = k;
+            best_last_pixel_column = k;
         }
     }
     free(tab);
@@ -199,19 +206,16 @@ min_energy_path(const double* energy_tab, size_t width, size_t height) {
         return NULL;
     }
 
-    size_t col = opt_end_pixel; // col
+    size_t col = best_last_pixel_column; // column
     for (size_t k = 0; k < height; k++) {
         size_t row = height - 1 - k; // (n-1) -> (0) = row
         path[row] = col;
+        size_t move = moves[row * width + col];
 
-        switch (moves[row * width + col]) {
-            case 1:
-                col--;
-                break;
-            case 3:
-                col++;
-                break;
-        }
+        if(move == 1)
+            col--;
+        else if(move == 3)
+            col++;
     }
 
     free(moves);
@@ -231,18 +235,20 @@ static double pixel_energy(const PNMImage* image, size_t i, size_t j) {
         unsigned char top_value = 0;
         unsigned char left_value = 0;
 
-        if(i > 0)
+        if (i > 0)
             top_value = pixel_value(image, i - 1, j, c);
         else
             top_value = pixel_value(image, i, j, c);
 
-        if(j > 0)
+        if (j > 0)
             left_value = pixel_value(image, i, j - 1, c);
         else
             left_value = pixel_value(image, i, j, c);
 
-        energy += fabs(((top_value - pixel_value(image, i + 1, j, c)) / 2.0));
-        energy += fabs(((left_value - pixel_value(image, i, j + 1, c)) / 2.0));
+        energy += fabs(((top_value -
+                         pixel_value(image, i + 1, j, c)) / 2.0));
+        energy += fabs(((left_value -
+                         pixel_value(image, i, j + 1, c)) / 2.0));
     }
 
     return energy;
