@@ -1,3 +1,0 @@
-/Users/sacha/CLionProjects/image_slimming/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/Users/sacha/CLionProjects/image_slimming/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/sacha/CLionProjects/image_slimming/cmake-build-debug/CMakeFiles/image_slimming.dir
