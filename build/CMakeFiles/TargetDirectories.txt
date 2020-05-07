@@ -1,3 +1,0 @@
-C:/Unif/Bac 2 Q2/SDA/Projet 3/image-slimming/build/CMakeFiles/image_slimming.dir
-C:/Unif/Bac 2 Q2/SDA/Projet 3/image-slimming/build/CMakeFiles/edit_cache.dir
-C:/Unif/Bac 2 Q2/SDA/Projet 3/image-slimming/build/CMakeFiles/rebuild_cache.dir
