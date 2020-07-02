@@ -5,6 +5,8 @@ Data Structures and Algorithms (INFO0902-1)
 
 It is a C implementation of a seam carving algorithm, with dynamic programming.
 
+The goal is to resize images smartly to avoid squeezing the important parts of the image. We do that by detecting the important parts of the image, and only deleting the others.
+
 The brute-force search method requires an exponential execution time. By using
 programming, it is reduced to a linear execution time.
 
