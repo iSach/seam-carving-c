@@ -32,7 +32,11 @@ about the project. (In French)
 ### Example
 
 Original image:
+
+
 ![original](https://i.imgur.com/n7vSK6c.png "Original")
 
 After resizing:
+
+
 ![resized](https://i.imgur.com/eGmH2yh.png "Resized")
